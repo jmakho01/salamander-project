@@ -25,7 +25,7 @@ export default function Videolist() {
       <h1>Available Videos</h1>
       <ul>
         {videos.map((filename) => (
-          <li key = {filename}><Link to={`/preview/${filename}`}>{filename}</Link></li>
+          <li key = {filename}><Link to={`/preview/${filename}`} className="text-black-200 hover:text-sky-700">{filename}</Link></li>
         ))}
       </ul>
     </div>

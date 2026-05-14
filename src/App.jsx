@@ -5,11 +5,11 @@ import Preview from './pages/Preview.jsx';
 
 export default function App() {
   return (
-    <div>
+    <div className="mx-auto flex max-w-xl items-center gap-x-4 rounded-xl bg-white p-8 shadow-lg outline outline-black/5 dark:bg-slate-200 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
       <nav>
-          <Link to="/">Home</Link>
+          <Link to="/" className="text-black-200 hover:text-sky-700">Home</Link>
           {' | '}
-          <Link to="/videos">Videos</Link>
+          <Link to="/videos" className="text-black-200 hover:text-sky-700">Videos</Link>
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />

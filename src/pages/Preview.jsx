@@ -7,7 +7,7 @@ export default function Preview() {
     <div>
       <h1>Preview: {filename}</h1>
       <p>Thumbnail and tuning controls will go here in a future pair program.</p>
-      <Link to="/videos">Back to videos</Link>
+      <Link to="/videos" className="text-black-200 hover:text-sky-700">Back to videos</Link>
     </div>
   );
 }
