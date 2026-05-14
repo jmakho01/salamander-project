@@ -8,24 +8,32 @@ export default function Videolist() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getVideos().then((data) => {setVideos(data);
-                                setLoading(false);}).catch((err) => {
-        setError(err.message);
-        setLoading(false);
-    });;
+    getVideos().then((data) => {
+      setVideos(data);
+      setLoading(false); 
+    }).catch((err) => {
+      setError(err.message);
+      setLoading(false);
+    });
   }, []);
-    if (loading) {
+
+  if (loading) {
     return <p>Loading videos...</p>;
-    }
-    if (error) {
+  }
+    
+  if (error) {
     return <p>Could not load videos: {error}</p>;
-    }
+  }
+  
   return (
     <div>
-      <h1>Available Videos</h1>
+      <h1 className = "text-center text-4xl font-bold">Available Videos</h1>
       <ul>
         {videos.map((filename) => (
-          <li key = {filename}><Link to={`/preview/${filename}`} className="text-black-200 hover:text-sky-700">{filename}</Link></li>
+          <li key = {filename}>{filename}
+            <Link to={`/preview/${filename}`} className="text-black-200 m-22 hover:text-sky-700">Preview</Link>
+            <Link to={`/playback/${filename}`} className="text-black-200 hover:text-sky-700">Playback</Link>
+          </li>
         ))}
       </ul>
     </div>
