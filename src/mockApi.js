@@ -26,8 +26,8 @@ const thumbnails = {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function getVideos() {
-  await delay(400);
-  return videos;
+    await delay(400);
+    return videos;
 }
 
 export async function getThumbnail(filename) {
