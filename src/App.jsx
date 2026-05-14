@@ -1,7 +1,19 @@
-import './App.css'
+import { Routes, Route, Link } from 'react-router-dom';
+import Home from './pages/Home.jsx';
+import Videolist from './pages/Videolist.jsx';
 
-function App() {
-  return <h1>Hello world</h1>;
-}
-
-export default App
+export default function App() {
+  return (
+    <div>
+      <nav>
+          <Link to="/">Home</Link>
+          {' | '}
+          <Link to="/videos">Videos</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/videos" element={<Videolist />} />
+      </Routes>
+    </div>
+  );
+} 
