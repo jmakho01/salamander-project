@@ -15,7 +15,6 @@ export default function Videolist() {
       setError(err.message);
       setLoading(false);
     });
-    console.log("hi")
   } );
 
   if (loading) {
