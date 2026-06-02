@@ -110,10 +110,8 @@ export default function Preview() {
   return (
     <div>
       <h1>Preview: {filename}</h1>
-<<<<<<< HEAD
       <img alt={filename} src={imgSrc}></img>
       <p>Thumbnail and tuning controls will go here in a future pair program.</p>
-=======
 
       {loading && <p>Loading thumbnail...</p>}
       {error && (<p className="text-red-500">Error: {error}</p>)}
@@ -164,7 +162,6 @@ export default function Preview() {
           </div>
         </>
       )}
->>>>>>> 07913574112df44b884612566a08e5c0ab0d418c
       <Link to="/videos" className="text-black-200 hover:text-sky-700">Back to videos</Link>
     </div>
   );
