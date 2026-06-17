@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getThumbnail } from '../api.js';
 import loadThumbnail from '../globalFunctions.js';
+import { findLargestGroupCentroid } from '../connectedComponents.js';
 
 function hexToRgb(hex) {
   return {
@@ -20,6 +21,7 @@ export default function Preview() {
 
   const [color, setColor] = useState('#000000');
   const [tolerance, setTolerance] = useState(50);
+  const [debouncedTolerance, setDebouncedTolerance] = useState(50);
   const [imageReady, setImageReady] = useState(false);
 
   const canvasRef = useRef(null);
@@ -42,44 +44,76 @@ export default function Preview() {
   }, [thumbnailUrl]);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedTolerance(tolerance);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [tolerance]);
+
+  useEffect(() => {
     if(!imageReady) return;
+
     const img = imgRef.current;
     const canvas = canvasRef.current;
     if(!img || !canvas) return;
 
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
+
     const ctx = canvas.getContext('2d');
+    
     ctx.drawImage(img, 0, 0);
 
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const px = data.data;
 
+    const px = data.data;
     const target = hexToRgb(color);
 
-    for (let i = 0; i < px.length; i += 4) {
-      const red = px[i];
-      const green = px[i + 1];
-      const blue = px[i + 2];
+    const binaryImage = Array.from(
+      { length: canvas.height },
+      () => Array(canvas.width).fill(0)
+    );
 
-      const dr = red - target.r;
-      const dg = green - target.g;
-      const db = blue - target.b;
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        const i = (y * canvas.width + x) * 4;
 
-      const distance = Math.sqrt(dr * dr + dg * dg + db * db);
+        const red = px[i];
+        const green = px[i + 1];
+        const blue = px[i + 2];
 
-      if(distance < tolerance) {
-        px[i] = 255;
-        px[i + 1] = 255;
-        px[i + 2] = 255;
-      } else {
-        px[i] = 0;
-        px[i + 1] = 0;
-        px[i + 2] = 0;
+        const dr = red - target.r;
+        const dg = green - target.g;
+        const db = blue - target.b;
+
+        const distance = Math.sqrt(dr * dr + dg * dg + db * db);
+
+        if (distance < debouncedTolerance) {
+          binaryImage[y][x] = 1;
+          px[i] = 255;
+          px[i + 1] = 255;
+          px[i + 2] = 255;
+        } else {
+          binaryImage[y][x] = 0;
+          px[i] = 0;
+          px[i + 1] = 0;
+          px[i + 2] = 0;
+        }
       }
     }
+
     ctx.putImageData(data, 0, 0);
-  }, [imageReady, color, tolerance]);
+
+    const centroid = findLargestGroupCentroid(binaryImage);
+
+    if (centroid) {
+      ctx.fillStyle = 'red';
+      ctx.beginPath();
+      ctx.arc(centroid.x, centroid.y, 15, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }, [imageReady, color, debouncedTolerance]);
 
   return (
     <div>
