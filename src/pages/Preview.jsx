@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getThumbnail } from '../api.js';
+import loadThumbnail from '../globalFunctions.js';
 
 function hexToRgb(hex) {
   return {
@@ -25,17 +26,7 @@ export default function Preview() {
   const imgRef = useRef(null);
 
   useEffect(() => {
-    async function loadThumbnail() {
-      try {
-        setLoading(true);
-        setError(null);
-        const url = await getThumbnail(filename);
-        setThumbnailUrl(url);
-      } 
-      catch(err) { setError(err.message); }
-      finally { setLoading(false); }
-    }
-    loadThumbnail();
+    loadThumbnail(filename, {setLoading, setError, setThumbnailUrl});
   }, [filename]);
 
   useEffect(() => {
@@ -143,6 +134,8 @@ export default function Preview() {
           </div>
         </>
       )}
+      <button className="text-black-200 hover:text-sky-700">Process</button>
+      <br></br>
       <Link to="/videos" className="text-black-200 hover:text-sky-700">Back to videos</Link>
     </div>
   );
