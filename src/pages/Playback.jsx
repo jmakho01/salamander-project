@@ -1,7 +1,7 @@
-import { getThumbnail } from '../api.js';
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { Link, useParams } from 'react-router-dom';
-import {loadThumbnail, loadVideoPreview} from '../globalFunctions.js';
+import { useParams } from 'react-router-dom';
+import { loadThumbnail, loadVideoPreview } from '../globalFunctions.js';
 
 export default function Playback( video ) {
     const { filename } = useParams();
