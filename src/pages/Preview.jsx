@@ -161,7 +161,7 @@ export default function Preview() {
 useEffect(() => {
   if(!result) return;
 
-  setDownloadUrl(`${import.meta.env.VITE_API_URL}/results/${filename}.csv/download`);
+  setDownloadUrl(`http://localhost:3000/results/${filename}.csv/download`);
 
 }, [result])
 
