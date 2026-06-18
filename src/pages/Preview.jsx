@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getThumbnail } from '../api.js';
-import {loadThumbnail} from '../globalFunctions.js';
+import { loadThumbnail } from '../globalFunctions.js';
 import { findLargestGroupCentroid } from '../connectedComponents.js';
 
 function hexToRgb(hex) {
@@ -23,6 +23,10 @@ export default function Preview() {
   const [tolerance, setTolerance] = useState(50);
   const [debouncedTolerance, setDebouncedTolerance] = useState(50);
   const [imageReady, setImageReady] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [jobId, setJobId] = useState(null);
 
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
@@ -115,6 +119,28 @@ export default function Preview() {
     }
   }, [imageReady, color, debouncedTolerance]);
 
+  const handleProcessVideo = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const targetColor = color.replace('#', '');
+      const response = await fetch(
+        `http://localhost:3000/process/${filename}?targetColor=${targetColor}&threshold=${tolerance}`,
+        { method: 'POST', }
+    );
+
+    if (!response.ok) throw new Error('Failed to start processing');
+
+    const data = await response.json();
+
+    setJobId(data.jobId);
+
+    console.log('Job started:', data.jobId);
+    } catch (err) { setSubmitError(err.message);
+    } finally { setIsSubmitting(false); }
+  };
+
   return (
     <div>
       <h1>Preview: {filename}</h1>
@@ -168,7 +194,18 @@ export default function Preview() {
           </div>
         </>
       )}
-      <button className="text-black-200 hover:text-sky-700">Process</button>
+      <button
+        onClick={handleProcessVideo}
+        disabled={isSubmitting}
+        className={`px-4 py-2 rounded ${
+        isSubmitting
+          ? 'bg-gray-400 cursor-not-allowed'
+          : 'bg-blue-500 text-white hover:bg-blue-600'
+      }`}
+      >
+      {isSubmitting ? 'Submitting...' : 'Process Video with These Settings'}
+      </button>
+      {submitError && ( <p className="text-red-500 mt-2">{submitError}</p>)}
       <br></br>
       <Link to="/videos" className="text-black-200 hover:text-sky-700">Back to videos</Link>
     </div>
