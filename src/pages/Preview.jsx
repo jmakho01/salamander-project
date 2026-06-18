@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getThumbnail } from '../api.js';
-import loadThumbnail from '../globalFunctions.js';
+import {loadThumbnail} from '../globalFunctions.js';
 import { findLargestGroupCentroid } from '../connectedComponents.js';
 
 function hexToRgb(hex) {
