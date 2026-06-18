@@ -35,3 +35,13 @@ export async function getJobStatus(jobId) {
   }
   return res.json();
 }
+
+export async function getVideoPreview(filename){
+  const url = `/preview/${filename}`;
+  const base = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+  const res = await fetch(url);
+  if (!res.ok){
+    throw new Error(`No video for ${filename}`);
+  }
+  return `${base}${url}`;
+}

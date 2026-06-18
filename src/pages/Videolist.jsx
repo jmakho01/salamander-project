@@ -30,13 +30,13 @@ export default function Videolist() {
       <h1 className = "text-center text-4xl font-bold">Available Videos</h1>
       <ul>
         {videos.map((filename) => (
-          <div className="flex fled-column">
-          <h2>{filename}</h2>
-          <li key = {filename} className="my-4">
-            <Link to={`/preview/${filename}`} className="text-black-200 m-22 hover:text-sky-700 btn btn-blue"><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">Preview</button></Link>
-            <Link to={`/playback/${filename}`} className="text-black-200 hover:text-sky-700"><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">Playback</button></Link>
-          </li>
+          <div className="flex fled-column pt-5 m-5 border-t-2">
+
+            <h2 className="text-center flex-1 font-semibold text-xl m-2">{filename}</h2>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded flex-1 m-2"><Link to={`/preview/${filename}`}>Preview</Link></button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded flex-1 m-2"><Link to={`/playback/${filename}`}>Playback</Link></button>
           </div>
+
         ))}
       </ul>
     </div>

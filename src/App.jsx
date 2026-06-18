@@ -3,6 +3,7 @@ import Home from './pages/Home.jsx';
 import Videolist from './pages/Videolist.jsx';
 import Preview from './pages/Preview.jsx';
 import Playback from './pages/Playback.jsx';
+import "./App.css"
 
 export default function App() {
   return (
