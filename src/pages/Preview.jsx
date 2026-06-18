@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { loadThumbnail } from '../globalFunctions.js';
 import { findLargestGroupCentroid } from '../connectedComponents.js';
+import {getJobStatus, getResults} from "../api.js";
 
 function hexToRgb(hex) {
   return {
@@ -27,6 +28,8 @@ export default function Preview() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [jobId, setJobId] = useState(null);
+  const [result, setResult] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState(null)
 
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
@@ -119,6 +122,50 @@ export default function Preview() {
     }
   }, [imageReady, color, debouncedTolerance]);
 
+  useEffect(() => {
+  if (!jobId) return;
+
+  const id = setInterval(async () => {
+    try {
+      const status = await getJobStatus(jobId);
+      setIsSubmitting(true);
+
+      if (status.status === 'processing') {
+        // still running, keep polling
+        return;
+      }
+
+      if (status.status === 'done') {
+        setResult(true);
+        setIsSubmitting(false)
+        console.log(result)
+        clearInterval(id);
+      }
+
+      if (status.status === 'error') {
+        setError(status.error);
+        setIsSubmitting(false)
+        clearInterval(id);
+      }
+
+    } catch (err) {
+      setError(err.message);
+      setIsSubmitting(false)
+      clearInterval(id);
+    }
+  }, 1500);
+
+  return () => clearInterval(id);
+}, [jobId]);
+
+useEffect(() => {
+  if(!result) return;
+
+  setDownloadUrl(`${import.meta.env.VITE_API_URL}/results/${filename}.csv/download`);
+
+}, [result])
+
+
   const handleProcessVideo = async () => {
     setIsSubmitting(true);
     setSubmitError(null);
@@ -198,14 +245,22 @@ export default function Preview() {
         onClick={handleProcessVideo}
         disabled={isSubmitting}
         className={`px-4 py-2 rounded ${
-        isSubmitting
+        isSubmitting || loading
           ? 'bg-gray-400 cursor-not-allowed'
           : 'bg-blue-500 text-white hover:bg-blue-600'
       }`}
       >
-      {isSubmitting ? 'Submitting...' : 'Process Video with These Settings'}
+      {isSubmitting ? 'Processing' : 'Process Video with These Settings'}
       </button>
       {submitError && ( <p className="text-red-500 mt-2">{submitError}</p>)}
+      <br></br>
+      {downloadUrl && (
+        <button className="bg-blue-500 text-white hover:bg-blue-600 m-2 p-3 rounded">
+        <a href={downloadUrl} download>
+          Download CSV
+        </a>
+        </button>
+      )}
       <br></br>
       <Link to="/videos" className="text-black-200 hover:text-sky-700">Back to videos</Link>
     </div>

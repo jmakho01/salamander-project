@@ -29,7 +29,7 @@ export async function submitProcessingJob(filename, targetColor, threshold) {
 }
 
 export async function getJobStatus(jobId) {
-  const res = await fetch(`/process/${jobId}/status`);
+  const res = await fetch(`/process/status/${jobId}`);
   if (!res.ok) {
     throw new Error(`Server responded ${res.status}`);
   }
@@ -45,3 +45,9 @@ export async function getVideoPreview(filename){
   }
   return `${base}${url}`;
 }
+
+export const getResults = async (filename) => {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/results/${filename}`);
+  if (!res.ok) throw new Error('Failed to fetch results');
+  return res.json();
+};
